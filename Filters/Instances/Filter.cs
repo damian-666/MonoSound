@@ -92,7 +92,7 @@ namespace MonoSound.Filters.Instances {
 			return mParam[aAttributeId];
 		}
 
-		public virtual void setFilterParameter(uint aAttributeId, float aValue) {
+		public virtual void SetFilterParameter(uint aAttributeId, float aValue) {
 			if (aAttributeId >= mNumParams)
 				return;
 

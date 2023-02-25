@@ -12,7 +12,10 @@ using System.Threading.Tasks;
 
 namespace MonoSound {
 	public static class MonoSoundLibrary {
-		internal static Dictionary<int, Filter> customFilters;
+
+		public static Dictionary<int, Filter> customFilters;
+
+		public static Dictionary<int, Filter> CustomFilters => customFilters;
 
 		internal static Dictionary<string, CustomFileFormat> registeredFormats;
 

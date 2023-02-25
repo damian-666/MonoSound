@@ -21,7 +21,9 @@ namespace MonoSound.Filters {
 				case SoundFilterType.Echo:
 					//Due to the echo filter causing repetitions, a buffer of nothing will be used
 					//This will let the full echo sound play
+
 					double time = EchoTimeStretchFactor(wav, 0.075f, filter);
+				   if (double.IsNaN(time) ){ time=1.0; }
 					Array.Resize(ref samples, samples.Length + (int)(wav.ByteRate * time + 1d));
 
 					HandleFilter(ref echFilter, filter, samples, wav);

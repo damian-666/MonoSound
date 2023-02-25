@@ -69,9 +69,13 @@ namespace MonoSound.Filters.Instances{
 			base.Free();
 		}
 
-		public SoLoudResult setParams(float aDelay, float aDecay, float aFilter){
-			if(aDelay <= 0 || aDecay <= 0 || aFilter < 0 || aFilter >= 1.0f)
-				return SoLoudResult.INVALID_PARAMETER;
+		public SoLoudResult setParams(float aDelay, float aDecay, float aFilter)
+		{
+			if(aDelay <= 0 ) aDelay= 0.0001f;
+			if (aDecay<0) aDecay=0f;
+			if (aFilter < 0 ) aFilter= 0;
+			if (aFilter > 1.0f ) aFilter= 1.0f;
+				
 
 			mParam[DECAY] = mDecay = aDecay;
 			mParam[DELAY] = mDelay = aDelay;

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoSound.Filters;
+using MonoSound.Filters.Instances;
 using MonoSound.Streaming;
 using System;
 using System.Collections.Generic;
@@ -58,14 +59,16 @@ namespace MonoSound.Tests {
 
 
 
-			int echo = FilterLoader.RegisterEchoFilter(1f, 0.002f, 0.001f, 1f);
+			int echo = FilterLoader.RegisterEchoFilter(1f, 0.2f,0.1f, 1f);
 
 
 			List<int> effects =new List<int>();
 
-		//	effects.Add(reverb); 
+			effects.Add(reverb); 
 			effects.Add(echo);
-			effects.Add(highPass);
+		//	effects.Add(highPass);
+
+			
             // GetFilteredEffect() can use either a relative path or an absolute path.  Files not supported will throw an exception.
   //       SoundEffect reverbEffect = EffectLoader.GetFilteredEffect("Content/chill-mono.ogg", reverb);
 
@@ -80,7 +83,7 @@ namespace MonoSound.Tests {
     //        CreateFilteredSFX
 
             r2 =reverbEffect.CreateInstance();
-
+	
 
 		}
 
@@ -98,7 +101,7 @@ namespace MonoSound.Tests {
 		protected override void OnExiting(object sender, EventArgs args) {
 			MonoSoundLibrary.DeInit();
 		}
-
+		float parm = 0;
 		protected override void Update(GameTime gameTime) {
 			oldKb = kb;
 			kb = Keyboard.GetState();
@@ -112,8 +115,15 @@ namespace MonoSound.Tests {
 				{
 
 				   r2.Pitch+=0.01f;
-				r2.Play(); 
-			}
+                r2.Play();
+
+
+		
+            }	
+			
+			parm+=0.3f;
+				MonoSoundLibrary.CustomFilters[4].SetFilterParameter(0, 0.1f);//todo this is not virtual
+
             //// Different pan testing -> Mono Channel
             //if (songInstance != null) {
             //	float revolutionsPerSecond = 0.6f;

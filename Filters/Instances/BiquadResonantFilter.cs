@@ -112,9 +112,9 @@ namespace MonoSound.Filters.Instances{
 			if(aType < WET || aType > RESONANCE || aFrequency <= 0 || aResonance <= 0)
 				return SoLoudResult.INVALID_PARAMETER;
 
-			setFilterParameter(TYPE, aType);
-			setFilterParameter(FREQUENCY, aFrequency);
-			setFilterParameter(RESONANCE, aResonance);
+			SetFilterParameter(TYPE, aType);
+			SetFilterParameter(FREQUENCY, aFrequency);
+			SetFilterParameter(RESONANCE, aResonance);
 
 			return SoLoudResult.SO_NO_ERROR;
 		}
