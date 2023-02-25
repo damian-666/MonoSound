@@ -189,7 +189,7 @@ namespace MonoSound.Audio {
 			 *  ----
 			 */
 
-			using VorbisReader reader = new VorbisReader(readStream, closeStreamOnDispose: true);
+			using VorbisReader reader = new VorbisReader(readStream,  true);
 
 			byte[] header = new byte[16];
 

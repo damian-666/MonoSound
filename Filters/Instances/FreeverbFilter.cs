@@ -32,7 +32,7 @@ namespace MonoSound.Filters.Instances {
 	// which was placed in public domain. The code was massaged quite a bit by 
 	// Jari Komppa, result in the license listed at top of this file.
 
-	internal unsafe class FreeverbFilter : Filter{
+	public unsafe class FreeverbFilter : Filter{
 		Revmodel mModel;
 
 		public const int WET = 0;
@@ -51,7 +51,7 @@ namespace MonoSound.Filters.Instances {
 
 			mModel = new Revmodel();
 
-			setParams(0, 0.5f, 0.5f, 1);
+			setParams(1, 0.5f, 1f, 1);
 		}
 
 		public override void Free(){

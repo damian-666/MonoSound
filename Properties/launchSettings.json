@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MonoSound": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

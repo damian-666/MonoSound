@@ -1,4 +1,4 @@
-﻿using FontStashSharp;
+﻿
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,7 +16,7 @@ namespace MonoSound.Tests {
 		private GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
 
-		private TestStateMachine machine;
+
 
 		public Game1() {
 			_graphics = new GraphicsDeviceManager(this);
@@ -27,31 +27,18 @@ namespace MonoSound.Tests {
 		protected override void Initialize() {
 			// TODO: Add your initialization logic here
 
-			machine = new TestStateMachine();
+	
 
-			machine.InitializeStates(
-				// Different pan testing
-				new TestState(Keys.D1, "Sound Panning", null).WithChildren(
-					new TestState(Keys.D1, "Stereo Channel - Broken", PlayStereoPanning),
-					new TestState(Keys.D2, "Mono Channel - Working", PlayMonoPanning)),
-				new TestState(Keys.D2, "Sound Streaming", null).WithChildren(
-					new TestState(Keys.D1, "Play Song", PlayStreamedSong),
-					new TestState(Keys.D2, "Stop Song", StopStreamedSong),
-					new TestState(Keys.D3, "Clear Filters", ClearStreamedSongFilters),
-					new TestState(Keys.D4, "Apply Low Pass Filter", ApplyLowPassFilterToStreamedSong),
-					new TestState(Keys.D5, "Apply High Pass Filter", ApplyHighPassFilterToStreamedSong),
-					new TestState(Keys.D6, "Apply Band Pass Filter", ApplyBandPassFilterToStreamedSong)),
-				new TestState(Keys.D3, "Filtered Sounds", null).WithChildren(
-					new TestState(Keys.D1, "Low Pass Filter", PlayLowPassFilteredSound),
-					new TestState(Keys.D2, "High Pass Filter", PlayHighPassFilteredSound),
-					new TestState(Keys.D3, "Band Pass Filter", PlayBandPassFilteredSound)));
-
+		
 			base.Initialize();
 		}
 
-		FontSystem _fontSystem;
 
-		protected override void LoadContent() {
+
+		SoundEffectInstance r2;
+
+
+        protected override void LoadContent() {
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 			// TODO: use this.Content to load your game content here
@@ -64,10 +51,37 @@ namespace MonoSound.Tests {
 			highPass = FilterLoader.RegisterBiquadResonantFilter(SoundFilterType.HighPass, 1, 1500, 8);
 			bandPass = FilterLoader.RegisterBiquadResonantFilter(SoundFilterType.BandPass, 1, 2000, 3);
 
-			Controls.StreamBufferLengthInSeconds = 0.01;
+			Controls.StreamBufferLengthInSeconds = 0.5;
 
-			_fontSystem = new FontSystem();
-			_fontSystem.AddFont(File.ReadAllBytes("C:/Windows/Fonts/times.ttf"));
+
+             int reverb = FilterLoader.RegisterReverbFilter(1f, lowFrequencyReverbStrength: 1f, highFrequencyReverbStrength: 1f, reverbStrength: .1f);
+
+
+
+			int echo = FilterLoader.RegisterEchoFilter(1f, 0.002f, 0.001f, 1f);
+
+
+			List<int> effects =new List<int>();
+
+		//	effects.Add(reverb); 
+			effects.Add(echo);
+			effects.Add(highPass);
+            // GetFilteredEffect() can use either a relative path or an absolute path.  Files not supported will throw an exception.
+  //       SoundEffect reverbEffect = EffectLoader.GetFilteredEffect("Content/chill-mono.ogg", reverb);
+
+            //	 SoundEffect reverbEffect = SoundEffect.FromFile("Content/Splash.wav");
+            //       SoundEffect reverbEffect = SoundEffect.FromFile("Content/Splash.wav");
+            //         SoundEffect reverbEffect = EffectLoader.GetFilteredEffect("Content/50cal.wav", reverb);
+
+ //            SoundEffect reverbEffect = EffectLoader.GetFilteredEffect("Content/MunchMunch-resaved.wav", echo);
+
+            SoundEffect reverbEffect = EffectLoader.GetMultiFilteredEffect("Content/MunchMunch-resaved.wav", effects.ToArray());
+
+    //        CreateFilteredSFX
+
+            r2 =reverbEffect.CreateInstance();
+
+
 		}
 
 		static KeyboardState kb, oldKb;
@@ -90,28 +104,25 @@ namespace MonoSound.Tests {
 			kb = Keyboard.GetState();
 
 			var input = kb.GetPressedKeys().Except(oldKb.GetPressedKeys());
-			if (!input.Any(k => k == Keys.Escape))
-				currentSequence.AddRange(input);
-			else if (currentSequence.Count > 0)
-				currentSequence.RemoveAt(currentSequence.Count - 1);
 
-			var current = machine.GetCurrentNode(currentSequence);
-			if (current is null) {
-				currentSequence.Clear();
-			} else if (current.onSelected != null) {
-				machine.InvokeCurrent(currentSequence);
-				currentSequence.Clear();
+
+
+
+			if (input.Any(x => x==Keys.Space))
+				{
+
+				   r2.Pitch+=0.01f;
+				r2.Play(); 
 			}
+            //// Different pan testing -> Mono Channel
+            //if (songInstance != null) {
+            //	float revolutionsPerSecond = 0.6f;
+            //	float sin = MathF.Sin(MathHelper.ToRadians(timer * 6f * revolutionsPerSecond));
+			 
+            //	songInstance.Pan = sin;
+            //}
 
-			// Different pan testing -> Mono Channel
-			if (songInstance != null) {
-				float revolutionsPerSecond = 0.6f;
-				float sin = MathF.Sin(MathHelper.ToRadians(timer * 6f * revolutionsPerSecond));
-
-				songInstance.Pan = sin;
-			}
-
-			timer++;
+            timer++;
 
 			base.Update(gameTime);
 		}
@@ -230,19 +241,10 @@ namespace MonoSound.Tests {
 
 			_spriteBatch.Begin();
 
-			SpriteFontBase font = _fontSystem.GetFont(18);
 
-			_spriteBatch.DrawString(font, $"FPS: {1 / (float)gameTime.ElapsedGameTime.TotalSeconds}", new Vector2(5, 5), Color.White);
-			_spriteBatch.DrawString(font, $"MEM: {ByteCountToLargeRepresentation(ThisProcess.WorkingSet64)} / {ByteCountToLargeRepresentation(ThisProcess.PeakWorkingSet64)}", new Vector2(5, 5 + font.LineHeight + 2), Color.White);
+		
 
-			if (songInstance != null)
-				_spriteBatch.DrawString(font, $"chill.ogg / Non-streamed     Pan = {songInstance.Pan}", new Vector2(20, 40), Color.White);
-
-			int y = 75;
-			foreach (string line in machine.ReportCurrentTree(currentSequence)) {
-				_spriteBatch.DrawString(font, line, new Vector2(10, y), Color.White);
-				y += font.LineHeight;
-			}
+	
 
 			_spriteBatch.End();
 

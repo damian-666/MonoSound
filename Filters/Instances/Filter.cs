@@ -7,7 +7,7 @@ namespace MonoSound.Filters.Instances {
 	/// <summary>
 	/// A port of SoLoud::Filter and SoLoud::FilterInstance
 	/// </summary>
-	internal unsafe class Filter {
+	public unsafe class Filter {
 		public const int FLOAT_PARAM = 0;
 		public const int INT_PARAM = 1;
 		public const int BOOL_PARAM = 2;

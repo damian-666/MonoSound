@@ -137,7 +137,7 @@ namespace MonoSound.Streaming {
 		/// <param name="file">The absolute or relative location of the file to read from</param>
 		public OggStream(string file) : base(AudioType.OGG) {
 			// Why can't i just use VorbisReader(string) here?
-			vorbisStream = new NVorbis.VorbisReader(TitleContainer.OpenStream(file), closeStreamOnDispose: true);
+			vorbisStream = new NVorbis.VorbisReader(TitleContainer.OpenStream(file), true);
 
 			Initialize();
 		}
@@ -147,7 +147,7 @@ namespace MonoSound.Streaming {
 		/// </summary>
 		/// <param name="stream">The data stream to read from</param>
 		public OggStream(Stream stream) : base(AudioType.OGG) {
-			vorbisStream = new NVorbis.VorbisReader(stream, closeStreamOnDispose: true);
+			vorbisStream = new NVorbis.VorbisReader(stream,  true);
 
 			Initialize();
 		}
